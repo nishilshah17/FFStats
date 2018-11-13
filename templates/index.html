@@ -106,37 +106,55 @@
   <body>
 
   <div class="ui main text container">
-    <h1 class="ui header">FFStats</h1>
-    <p>Extensive analysis on your ESPN fantasy football league.</p>
+    <img width="25%" class="ui image" src="{{url_for('static',filename='images/logo.png')}}">
+    <br/>
+    <p>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <b>Extensive analysis on ESPN fantasy football leagues.</b>
+    </p>
   </div>
 
 
   <div class="ui borderless main menu">
     <div class="ui text container">
       <div class="header item">
-        <img class="logo" src="assets/images/logo.png">
+        <img class="logo" src="{{url_for('static',filename='images/logo_mini.png')}}">
         FFStats
       </div>
+      <a href="#features" class="item">Features</>
       <a href="https://github.com/nishilshah17/FFStats" target="_" class="item">GitHub</a>
       <a href="https://github.com/nishilshah17/PyFF" target="_" class="item">PyFF</a>
     </div>
   </div>
 
   <div class="ui text container">
-    <div class="ui card">
-      <div class="content">
-        <div class="center aligned header">
-          <h3 class="ui header">Try It Out</h3>
-        </div>
-      </div>
-      <div class="extra content">
-        <div class="center aligned author">
-          <img class="ui image" src="https://semantic-ui.com/images/avatar/small/jenny.jpg">
-        </div>
-      </div>
-    </div>
     <hr>
-    <h2 class="ui header">Features</h2>
+    <br/><br/>
+    <div class="ui three column grid">
+      <div class="column"></div>
+      <div class="column">
+        <div class="ui card">
+          <div class="content">
+            <div class="center aligned header">
+              <h3 class="ui header">Try It Out</h3>
+            </div>
+          </div>
+          <div class="extra content">
+            <div class="center aligned author">
+              <a>
+                <img class="ui image" src="{{url_for('static',filename='images/signin.png')}}">
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column"></div>
+    </div>
+    <br/><br/>
+    <hr>
+    <br/>
+    <h2 class="ui header" id="features">Features</h2>
     <div class="ui three column grid">
       <div class="column">
         <div class="ui fluid card">
