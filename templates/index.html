@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Meta -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <title>FFStats</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{url_for('static',filename='css/index.css')}}">
+    <script
+      type="text/javascript"
+      src="{{url_for('static',filename='js/jquery.min.js')}}">
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/semantic.min.css')}}">
+
+    <script src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
+    <script src="{{url_for('static',filename='js/transition.js')}}"></script>
+    <script src="{{url_for('static',filename='js/dropdown.js')}}"></script>
+    <script src="{{url_for('static',filename='js/visibility.js')}}"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+    <script>
+      $(document).ready(function() {
+          // fix main menu to page on passing
+          $('.main.menu').visibility({
+            type: 'fixed'
+          });
+          $('.overlay').visibility({
+            type: 'fixed',
+            offset: 80
+          });
+          // lazy load images
+          $('.image').visibility({
+            type: 'image',
+            transition: 'vertical flip in',
+            duration: 500
+          });
+          // show dropdown on hover
+          $('.main.menu  .ui.dropdown').dropdown({
+            on: 'hover'
+          });
+      });
+    </script>
+
+
+      <style type="text/css">
+
+      body {
+        background-color: #FFFFFF;
+      }
+      .main.container {
+        margin-top: 2em;
+      }
+
+      .main.menu {
+        margin-top: 4em;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+        transition:
+          box-shadow 0.5s ease,
+          padding 0.5s ease
+        ;
+      }
+      .main.menu .item img.logo {
+        margin-right: 1.5em;
+      }
+
+      .overlay {
+        float: left;
+        margin: 0em 3em 1em 0em;
+      }
+      .overlay .menu {
+        position: relative;
+        left: 0;
+        transition: left 0.5s ease;
+      }
+
+      .main.menu.fixed {
+        background-color: #FFFFFF;
+        border: 1px solid #DDD;
+        box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+      }
+      .overlay.fixed .menu {
+        left: 800px;
+      }
+
+      .text.container .left.floated.image {
+        margin: 2em 2em 2em -4em;
+      }
+      .text.container .right.floated.image {
+        margin: 2em -4em 2em 2em;
+      }
+
+      .ui.footer.segment {
+        margin: 5em 0em 0em;
+        padding: 5em 0em;
+      }
+      </style>
+  </head>
+  <body>
+
+  <div class="ui main text container">
+    <h1 class="ui header">FFStats</h1>
+    <p>Extensive analysis on your ESPN fantasy football league.</p>
+  </div>
+
+
+  <div class="ui borderless main menu">
+    <div class="ui text container">
+      <div class="header item">
+        <img class="logo" src="assets/images/logo.png">
+        FFStats
+      </div>
+      <a href="https://github.com/nishilshah17/FFStats" target="_" class="item">GitHub</a>
+      <a href="https://github.com/nishilshah17/PyFF" target="_" class="item">PyFF</a>
+    </div>
+  </div>
+
+  <div class="ui text container">
+    <div class="ui card">
+      <div class="content">
+        <div class="center aligned header">
+          <h3 class="ui header">Try It Out</h3>
+        </div>
+      </div>
+      <div class="extra content">
+        <div class="center aligned author">
+          <img class="ui image" src="https://semantic-ui.com/images/avatar/small/jenny.jpg">
+        </div>
+      </div>
+    </div>
+    <hr>
+    <h2 class="ui header">Features</h2>
+    <div class="ui three column grid">
+      <div class="column">
+        <div class="ui fluid card">
+          <div class="content">
+            <div class="header">
+              <h3 class="ui header">Migration</h3>
+            </div>
+            <div class="description">
+              Export your data from ESPN into several different formats.
+            </div>
+          </div>
+        </div>
+        <div class="ui fluid card">
+          <div class="content">
+            <div class="header">
+              <h3 class="ui header">PyFF</h3>
+            </div>
+            <div class="description">
+              Use PyFF to access all the same data in your own projects.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="ui fluid card">
+          <div class="content">
+            <div class="header">
+              <h3 class="ui header">League History</h3>
+            </div>
+            <div class="description">
+              View and track history of your league in our simple interface.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="ui fluid card">
+          <div class="content">
+            <div class="header">
+              <h3 class="ui header">League Analysis</h3>
+            </div>
+            <div class="description">
+              Get analysis on your league's past drafts and owner performance.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui inverted vertical footer segment">
+    <div class="ui center aligned container">
+      <!--<img src="assets/images/logo.png" class="ui centered mini image">-->
+      <div class="ui horizontal inverted small divided link list">
+        <a class="item" href="#">Contact Us</a>
+        <a class="item" href="#">Terms and Conditions</a>
+        <a class="item" href="#">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
