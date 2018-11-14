@@ -7,10 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
     <title>FFStats</title>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{{url_for('static',filename='css/index.css')}}">
     <script
       type="text/javascript"
       src="{{url_for('static',filename='js/jquery.min.js')}}">
@@ -18,7 +14,6 @@
 
     <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/semantic.min.css')}}">
 
-    <script src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
     <script src="{{url_for('static',filename='js/transition.js')}}"></script>
     <script src="{{url_for('static',filename='js/dropdown.js')}}"></script>
     <script src="{{url_for('static',filename='js/visibility.js')}}"></script>
@@ -205,7 +200,7 @@
 
   <div class="ui inverted vertical footer segment">
     <div class="ui center aligned container">
-      <!--<img src="assets/images/logo.png" class="ui centered mini image">-->
+      <img src="{{url_for('static',filename='images/logo_mini_black.png')}}" class="ui centered mini image">
       <div class="ui horizontal inverted small divided link list">
         <a class="item" href="#">Contact Us</a>
         <a class="item" href="#">Terms and Conditions</a>
@@ -261,9 +256,7 @@
       });
     }
 
-    document.getElementById('signin').onclick = function signinClicked() {
-      signin();
-    }
+    document.getElementById('signin').onclick = signin;
   </script>
-</body>
+  </body>
 </html>

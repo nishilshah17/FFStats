@@ -1,128 +1,135 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <!-- Meta -->
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Meta -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>FFStats</title>
+    <title>FFStats</title>
+    <script
+      type="text/javascript"
+      src="{{url_for('static',filename='js/jquery.min.js')}}">
+    </script>
+    <script
+      type="text/javascript"
+      src="{{url_for('static',filename='js/require.min.js')}}">
+    </script>
 
-  <link
-    rel="stylesheet"
-    type="text/css"
-    href="{{url_for('static',filename='css/index.css')}}">
-  <script
-    type="text/javascript"
-    src="{{url_for('static',filename='js/jquery.min.js')}}">
-  </script>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/semantic.min.css')}}">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 
-  <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/semantic.min.css')}}">
+    <style type="text/css">
+      body {
+        background-color: #FFFFFF;
+      }
+      .ui.menu .item img.logo {
+        margin-right: 1.5em;
+      }
+      .main.container {
+        margin-top: 7em;
+      }
+      .wireframe {
+        margin-top: 2em;
+      }
+      .ui.footer.segment {
+        margin: 5em 0em 0em;
+        padding: 5em 0em;
+      }
+    </style>
+  </head>
+  <body>
 
-  <style type="text/css">
-    body {
-      background-color: #FFFFFF;
-    }
-    .ui.menu .item img.logo {
-      margin-right: 1.5em;
-    }
-    .main.container {
-      margin-top: 7em;
-    }
-    .wireframe {
-      margin-top: 2em;
-    }
-    .ui.footer.segment {
-      margin: 5em 0em 0em;
-      padding: 5em 0em;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="ui fixed inverted menu">
-    <div class="ui container">
-      <a href="#" class="header item">
-        <img class="logo" src="{{url_for('static',filename='images/logo_mini_black.png')}}">
-        FFStats
-      </a>
-      <a href="#" class="item">Home</a>
-      <div class="ui simple dropdown item">
-        Settings <i class="dropdown icon"></i>
-        <div class="menu">
-          <a class="item" href="#">Link Item</a>
-          <div class="divider"></div>
-          <div class="header">Header Item</div>
-          <div class="item">
-            <i class="dropdown icon"></i>
-            Sub Menu
-            <div class="menu">
-              <a class="item" href="#">Link Item</a>
-              <a class="item" href="#">Link Item</a>
+    <div class="ui fixed inverted menu">
+      <div class="ui container">
+        <a href="#" class="header item">
+          <img class="logo" src="{{url_for('static',filename='images/logo_mini_black.png')}}">
+          FFStats
+        </a>
+        <a href="#" class="item">Home</a>
+        <a href="/" class="item">Logout</a>
+        <!--<div class="ui simple dropdown item">
+          Settings <i class="dropdown icon"></i>
+          <div class="menu">
+            <a class="item" href="#">Link Item</a>
+            <div class="divider"></div>
+            <div class="header">Header Item</div>
+            <div class="item">
+              <i class="dropdown icon"></i>
+              Sub Menu
+              <div class="menu">
+                <a class="item" href="#">Link Item</a>
+                <a class="item" href="#">Link Item</a>
+              </div>
             </div>
           </div>
-        </div>
+        </div>-->
       </div>
     </div>
-  </div>
 
-  <div class="ui main text container">
-    <div class="ui action input">
-      <input type="text" placeholder="Enter ESPN league ID...">
-      <button class="ui button">Add League</button>
+    <div class="ui main text container">
+      <div class="ui action input">
+        <input type="text" id="leagueID" placeholder="Enter ESPN league ID...">
+        <button class="ui button" id="addLeague">Add League</button>
+      </div>
+      <h1 class="ui header">Your Leagues</h1>
+      <!--<p>You have no leagues. Add a league to get started.</p>-->
+      <div class="ui three stackable cards">
+        <a class="ui card" href="#">
+          <div class="content">
+            <div class="header">PJC Fantasy Football League</div>
+            <div class="meta">
+              <span class="category">2012-2018</span>
+            </div>
+            <div class="description">
+              <p></p>
+            </div>
+          </div>
+          <div class="extra content">
+            <div class="right floated author">
+              Zeke Squad
+            </div>
+          </div>
+        </a>
+        <a class="ui card" href="#">
+          <div class="content">
+            <div class="header">League Name</div>
+            <div class="meta">
+              <span class="category">2014-2018</span>
+            </div>
+            <div class="description">
+              <p></p>
+            </div>
+          </div>
+          <div class="extra content">
+            <div class="right floated author">
+              Team Name
+            </div>
+          </div>
+        </a>
     </div>
-    <h1 class="ui header">Your Leagues</h1>
-    <!--<p>You have no leagues. Add a league to get started.</p>-->
-    <div class="ui three stackable cards">
-      <a class="ui card" href="http://www.dog.com">
-        <div class="content">
-          <div class="header">League Name</div>
-          <div class="meta">
-            <span class="category">2014-2018</span>
-          </div>
-          <div class="description">
-            <p></p>
-          </div>
-        </div>
-        <div class="extra content">
-          <div class="right floated author">
-            Team Name
-          </div>
-        </div>
-      </a>
-      <a class="ui card" href="http://www.dog.com">
-        <div class="content">
-          <div class="header">League Name</div>
-          <div class="meta">
-            <span class="category">2014-2018</span>
-          </div>
-          <div class="description">
-            <p></p>
-          </div>
-        </div>
-        <div class="extra content">
-          <div class="right floated author">
-            Team Name
-          </div>
-        </div>
-      </a>
-      <a class="ui card" href="http://www.dog.com">
-        <div class="content">
-          <div class="header">League Name</div>
-          <div class="meta">
-            <span class="category">2014-2018</span>
-          </div>
-          <div class="description">
-            <p></p>
-          </div>
-        </div>
-        <div class="extra content">
-          <div class="right floated author">
-            Team Name
-          </div>
-        </div>
-      </a>
-  </div>
-</body>
 
+    <script>
+      // FIREBASE STUFF
+      var config = {
+        apiKey: "AIzaSyAj619jd3xmYZbUSQPBS9kkjzKJvyAXBEc",
+        authDomain: "ffstats-f2558.firebaseapp.com",
+        databaseURL: "https://ffstats-f2558.firebaseio.com",
+        projectId: "ffstats-f2558",
+        storageBucket: "ffstats-f2558.appspot.com",
+        messagingSenderId: "339504328835"
+      };
+
+      //firebase.initializeApp(config);
+
+      var access_token = '{{ access_token }}';
+      var uid = '{{ uid }}';
+
+      function addLeague() {
+        alert("fdsa");
+      }
+
+      document.getElementById('addLeague').onclick = addLeague;
+    </script>
+  </body>
 </html>
