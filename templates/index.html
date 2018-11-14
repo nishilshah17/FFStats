@@ -47,9 +47,7 @@
       });
     </script>
 
-
-      <style type="text/css">
-
+    <style type="text/css">
       body {
         background-color: #FFFFFF;
       }
@@ -101,7 +99,7 @@
         margin: 5em 0em 0em;
         padding: 5em 0em;
       }
-      </style>
+    </style>
   </head>
   <body>
 
@@ -142,7 +140,7 @@
           </div>
           <div class="extra content">
             <div class="center aligned author">
-              <a>
+              <a id="signin">
                 <img class="ui image" src="{{url_for('static',filename='images/signin.png')}}">
               </a>
             </div>
@@ -215,5 +213,57 @@
       </div>
     </div>
   </div>
+
+  <script src="https://www.gstatic.com/firebasejs/5.5.8/firebase.js"></script>
+  <script>
+    // FIREBASE STUFF
+    var config = {
+      apiKey: "AIzaSyAj619jd3xmYZbUSQPBS9kkjzKJvyAXBEc",
+      authDomain: "ffstats-f2558.firebaseapp.com",
+      databaseURL: "https://ffstats-f2558.firebaseio.com",
+      projectId: "ffstats-f2558",
+      storageBucket: "ffstats-f2558.appspot.com",
+      messagingSenderId: "339504328835"
+    };
+
+    firebase.initializeApp(config);
+    var provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+    firebase.auth().useDeviceLanguage();
+
+    function signin() {
+      firebase.auth().signInWithPopup(provider).then(function(result) {
+        // Google Access Token
+        var token = result.credential.accessToken;
+        // Signed in user
+        var uid = result.user.uid;
+
+        console.log(token);
+        console.log(uid);
+
+        $.ajax({
+          type: "POST",
+          url: "/signin",
+          dataType: "json",
+          contentType: "application/json",
+          data: JSON.stringify({
+            "access_token": token,
+            "uid": uid
+          }),
+          success: function(response, textStatus, xhr) {
+            if(xhr.status == 200) {
+              window.location.href = '/home';
+            }
+          }
+        });
+      }).catch(function(error) {
+        // Handle error here
+      });
+    }
+
+    document.getElementById('signin').onclick = function signinClicked() {
+      signin();
+    }
+  </script>
 </body>
 </html>
