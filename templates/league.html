@@ -40,7 +40,7 @@
           <img class="logo" src="{{url_for('static',filename='images/logo_mini_black.png')}}">
           FFStats
         </a>
-        <a href="#" class="item">Home</a>
+        <a href="/home" class="item">Home</a>
         <a href="/" class="item">Logout</a>
       </div>
     </div>
@@ -110,19 +110,6 @@
         timestampsInSnapshots: true
       });
 
-      function addLeague() {
-        var leagueId = document.getElementById('leagueId').value;
-
-        var leagueRef = db.collection("leagues").doc(leagueId);
-        var userRef = db.collection("users").doc(uid);
-
-        // add league ID
-        userRef.collection("leagues").doc(leagueId).set({
-          "ref": leagueRef
-        });
-      }
-
-      document.getElementById('addLeague').onclick = addLeague;
     </script>
   </body>
 </html>

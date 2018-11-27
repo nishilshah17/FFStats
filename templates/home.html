@@ -40,7 +40,7 @@
           <img class="logo" src="{{url_for('static',filename='images/logo_mini_black.png')}}">
           FFStats
         </a>
-        <a href="#" class="item">Home</a>
+        <a href="javascript:void(0)" class="item">Home</a>
         <a href="/" class="item">Logout</a>
         <!--<div class="ui simple dropdown item">
           Settings <i class="dropdown icon"></i>
@@ -61,31 +61,20 @@
       </div>
     </div>
 
-    <div class="ui main text container">
+    <div class="ui main text container" id="main">
       <div class="ui action input">
         <input type="text" id="leagueId" placeholder="Enter ESPN league ID...">
         <button class="ui button" id="addLeague">Add League</button>
       </div>
       <h2 class="ui header">Your Leagues</h2>
       <!--<p>You have no leagues. Add a league to get started.</p>-->
-      <div class="ui three stackable cards">
-        <a class="ui card" href="#" id="404425">
-          <div class="content">
-            <div class="header">PJC Fantasy Football League</div>
-            <!--<div class="meta">
-              <span class="category">2012-2018</span>
-            </div>
-            <div class="description">
-              <p></p>
-            </div>-->
-          </div>
-          <div class="extra content">
-            <div class="right floated author">
-              2012-2018
-            </div>
-          </div>
-        </a>
+
+      <!--in cards div <div class="meta">
+        <span class="category">2012-2018</span>
       </div>
+      <div class="description">
+        <p></p>
+      </div>-->
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/5.5.8/firebase-app.js"></script>
@@ -110,11 +99,11 @@
         timestampsInSnapshots: true
       });
 
+      var userRef = db.collection("users").doc(uid);
+
       function addLeague() {
         var leagueId = document.getElementById("leagueId").value;
-
         var leagueRef = db.collection("leagues").doc(leagueId);
-        var userRef = db.collection("users").doc(uid);
 
         // add league ID
         userRef.collection("leagues").doc(leagueId).set({
@@ -122,9 +111,28 @@
         });
       }
 
+      function viewLeague(leagueId) {
+        window.location.href = '/home/league/' + leagueId;
+      }
+
       $(document).ready(function() {
-        $('a.card').click(function(event) {
-          window.location.href = '/home/league/' + $(this).attr('id');
+        // add leagues to view
+        userRef.collection("leagues").get().then(snapshot => {
+          if(snapshot.docs.length == 0) {
+            // no leagues
+            $('#main').append('<p>You have no leagues. Add a league to get started.</p>');
+          } else {
+            $('#main').append('<div class="ui three stackable cards" id="leagues"></div>');
+            for (var i = 0; i < snapshot.docs.length; i++) {
+              var doc = snapshot.docs[i];
+              var leagueRef = doc.data().ref;
+              leagueRef.get().then(snap => {
+                var data = snap.data();
+                // add league to view
+                $('#leagues').append('<a class="ui card" href="javascript:viewLeague(' + doc.id + ')"><div class="content"><div class="header">' + data.name + '</div></div><div class="extra content"><div class="right floated author">' + data.length + '</div></div></a>');
+              });
+            }
+          }
         });
       });
 
