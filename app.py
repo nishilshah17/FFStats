@@ -27,6 +27,14 @@ def league(league_id):
     global access_token, uid
     return render_template("league.html", access_token=access_token, uid=uid, league_id=league_id)
 
+@app.route("/home/league/<league_id>/season/<year>")
+def season(league_id, year):
+    '''
+    Render season for a league page
+    '''
+    global access_token, uid
+    return render_template("season.html", access_token=access_token, uid=uid, league_id=league_id, season=year)
+
 @app.route("/signin", methods=["POST"])
 def signin():
     '''
