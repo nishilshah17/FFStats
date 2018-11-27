@@ -46,41 +46,45 @@
     </div>
 
     <div class="ui main text container">
-      <h1 class="ui header">PJC Fantasy Football League</h1>
-      <hr>
+      <div class="ui clearing segment">
+        <h1 class="ui left floated header">
+          PJC Fantasy Football League
+        </h1>
+      </div>
+
       <h2 class="ui header">Seasons</h2>
       <div class="ui three stackable cards">
-        <a class="ui card" href="#">
+        <a class="ui red card" href="javascript:viewSeason(2018)">
           <div class="content">
             <div class="header">2018</div>
           </div>
         </a>
-        <a class="ui card" href="#">
+        <a class="ui orange card" href="javascript:viewSeason(2017)">
           <div class="content">
             <div class="header">2017</div>
           </div>
         </a>
-        <a class="ui card" href="#">
+        <a class="ui yellow card" href="#">
           <div class="content">
             <div class="header">2016</div>
           </div>
         </a>
-        <a class="ui card" href="#">
+        <a class="ui olive card" href="#">
           <div class="content">
             <div class="header">2015</div>
           </div>
         </a>
-        <a class="ui card" href="#">
+        <a class="ui green card" href="#">
           <div class="content">
             <div class="header">2014</div>
           </div>
         </a>
-        <a class="ui card" href="#">
+        <a class="ui teal card" href="#">
           <div class="content">
             <div class="header">2013</div>
           </div>
         </a>
-        <a class="ui card" href="#">
+        <a class="ui blue card" href="#">
           <div class="content">
             <div class="header">2012</div>
           </div>
@@ -91,8 +95,11 @@
     <script src="https://www.gstatic.com/firebasejs/5.5.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.5.8/firebase-firestore.js"></script>
     <script>
+      var colors = ["red", "orange", "yellow", "olive", "green", "teal", "blue", "violet", "purple", "pink", "brown", "grey"];
+
       var access_token = '{{ access_token }}';
       var uid = '{{ uid }}';
+      var league_id = '{{ league_id }}';
 
       // FIREBASE STUFF
       var config = {
@@ -109,6 +116,10 @@
       db.settings({
         timestampsInSnapshots: true
       });
+
+      function viewSeason(year) {
+        window.location.href = '/home/league/' + league_id + '/season/' + year;
+      }
 
     </script>
   </body>
