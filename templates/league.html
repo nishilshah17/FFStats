@@ -41,23 +41,7 @@
           FFStats
         </a>
         <a href="#" class="item">Home</a>
-        <a href="/" class="item">Logout</a>
-        <!--<div class="ui simple dropdown item">
-          Settings <i class="dropdown icon"></i>
-          <div class="menu">
-            <a class="item" href="#">Link Item</a>
-            <div class="divider"></div>
-            <div class="header">Header Item</div>
-            <div class="item">
-              <i class="dropdown icon"></i>
-              Sub Menu
-              <div class="menu">
-                <a class="item" href="#">Link Item</a>
-                <a class="item" href="#">Link Item</a>
-              </div>
-            </div>
-          </div>
-        </div>-->
+        <a href="/home" class="item">Logout</a>
       </div>
     </div>
 
@@ -66,10 +50,9 @@
         <input type="text" id="leagueId" placeholder="Enter ESPN league ID...">
         <button class="ui button" id="addLeague">Add League</button>
       </div>
-      <h1 class="ui header">Your Leagues</h1>
-      <!--<p>You have no leagues. Add a league to get started.</p>-->
+      <h1 class="ui header">Seasons</h1>
       <div class="ui three stackable cards">
-        <a class="ui card" href="#" id="404425">
+        <a class="ui card" href="#">
           <div class="content">
             <div class="header">PJC Fantasy Football League</div>
             <!--<div class="meta">
@@ -111,7 +94,7 @@
       });
 
       function addLeague() {
-        var leagueId = document.getElementById("leagueId").value;
+        var leagueId = document.getElementById('leagueId').value;
 
         var leagueRef = db.collection("leagues").doc(leagueId);
         var userRef = db.collection("users").doc(uid);
@@ -121,12 +104,6 @@
           "ref": leagueRef
         });
       }
-
-      $(document).ready(function() {
-        $('a.card').click(function(event) {
-          window.location.href = '/home/league/' + $(this).attr('id');
-        });
-      });
 
       document.getElementById('addLeague').onclick = addLeague;
     </script>
