@@ -95,10 +95,10 @@
             $('#main').append('<p>Error: No data to display.</p>');
           } else {
             $('#main').append('<div class="ui three stackable cards" id="seasons"></div>');
+            $('#loader').toggleClass('active', 'disabled');
             for(var i = 0; i < snapshot.docs.length; i++) {
               var doc = snapshot.docs[i];
               // add season to view
-              $('#loader').toggleClass('active', 'disabled');
               var cardColor = colors[i % colors.length];
               $('#seasons').append('<a class="ui ' + cardColor + ' card" href="javascript:viewSeason(' + doc.id + ')"><div class="content"><div class="header">' + doc.id + '</div></div></a>');
             }

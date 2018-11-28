@@ -118,7 +118,8 @@
           function getMatchups(week) {
             // empty div
             $('#matchups').empty();
-            $('#loader').toggleClass('disabled', 'active');
+            $('#loader').removeClass('disabled');
+            $('#loader').addClass('active');
             // add matchups for week
             seasonRef.collection('matchups').where('week', '==', parseInt(week)).get().then(snapshot => {
               if(snapshot.docs.length == 0) {
@@ -146,7 +147,8 @@
                       let homeName = homeData.teamLocation + ' ' + homeData.teamNickname;
                       let homeAbbrev = homeData.teamAbbrev;
 
-                      $('#loader').toggleClass('active', 'disabled');
+                      $('#loader').removeClass('active');
+                      $('#loader').addClass('disabled');
                       if(winner == "away") {
                         $('#matchups').append('<div class="ui card"><div class="content"><div class="ui center aligned two column grid"><div class="column"><div class="header">' + awayName + '</div><div class="meta">' + awayAbbrev + '</div></div><div class="column"><div class="header">' + homeName + '</div><div class="meta">' + homeAbbrev + '</div></div></div></div><div class="extra content"><div class="ui two buttons"><div class="ui basic green button">' + awayPoints + '</div><div class="ui basic red button">' + homePoints + '</div></div></div></div>');
                       } else {
