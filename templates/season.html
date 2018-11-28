@@ -58,7 +58,7 @@
       <div class="ui segment">
         <div class="ui left very close rail">
           <div class="ui secondary vertical pointing menu right floated" style="width:50%">
-            <a class="active item tabitem">Week 1</a>
+            <a class="active tabactive item tabitem">Week 1</a>
             <a class="item tabitem">2</a>
             <a class="item tabitem">3</a>
             <a class="item tabitem">4</a>
@@ -74,6 +74,12 @@
             <a class="item tabitem">14</a>
             <a class="item tabitem">15</a>
             <a class="item tabitem">16</a>
+          </div>
+        </div>
+        <div class="ui right very close rail">
+          <div class="ui inverted vertical menu">
+            <a class="item active">Matchups</a>
+            <a class="item">Teams</a>
           </div>
         </div>
           <div class="ui two stackable cards" id="matchups">
@@ -162,14 +168,16 @@
           }
 
           $('.tabitem').click(function(){
-              var weekText = $('.active').text();
+              var weekText = $('.tabactive').text();
               var week = weekText.split(' ')[1];
-              $('.active').text(week);
-              $('.active').removeClass('active');
+              $('.tabactive').text(week);
+              $('.tabactive').removeClass('active');
+              $('.tabactive').removeClass('tabactive');
 
               weekText = $(this).text();
               $(this).text('Week ' + weekText);
               $(this).addClass('active');
+              $(this).addClass('tabactive');
 
               getMatchups(parseInt(week));
           });
