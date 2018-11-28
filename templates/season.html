@@ -10,6 +10,8 @@
 
       <!-- JS -->
       <script type="text/javascript" src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
+      <script src="{{url_for('static',filename='js/transition.js')}}"></script>
+      <script src="{{url_for('static',filename='js/dropdown.js')}}"></script>
       <script src="https://apis.google.com/js/platform.js" async defer></script>
       <!-- CSS -->
       <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/semantic.min.css')}}">
@@ -50,11 +52,35 @@
       <h1 class="ui left floated header">
         PJC Fantasy Football League
       </h1>
-      <h1 class="ui right floated header">
-        2018
-      </h1>
+      <h1 class="ui right floated header" id="season"></h1>
       </div>
 
+      <div class="ui segment">
+        <div class="ui left very close rail">
+          <div class="ui secondary vertical pointing menu right floated" style="width:50%">
+            <a class="active item tabitem">Week 1</a>
+            <a class="item tabitem">2</a>
+            <a class="item tabitem">3</a>
+            <a class="item tabitem">4</a>
+            <a class="item tabitem">5</a>
+            <a class="item tabitem">6</a>
+            <a class="item tabitem">7</a>
+            <a class="item tabitem">8</a>
+            <a class="item tabitem">9</a>
+            <a class="item tabitem">10</a>
+            <a class="item tabitem">11</a>
+            <a class="item tabitem">12</a>
+            <a class="item tabitem">13</a>
+            <a class="item tabitem">14</a>
+            <a class="item tabitem">15</a>
+            <a class="item tabitem">16</a>
+          </div>
+        </div>
+          <div class="ui two stackable cards" id="matchups">
+          </div>
+          <br/>
+          <div id="loader" class="ui disabled centered inline big loader"></div>
+      </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/5.5.8/firebase-app.js"></script>
@@ -62,6 +88,8 @@
     <script>
       var access_token = '{{ access_token }}';
       var uid = '{{ uid }}';
+      var league_id = '{{ league_id }}';
+      var season = '{{ season }}';
 
       // FIREBASE STUFF
       var config = {
@@ -77,6 +105,75 @@
       const db = firebase.firestore();
       db.settings({
         timestampsInSnapshots: true
+      });
+
+      var leagueRef = db.collection("leagues").doc(league_id);
+      var seasonRef = leagueRef.collection("seasons").doc(season);
+      var matchups = {};
+
+      $(document).ready(function() {
+          $('.ui.dropdown').dropdown();
+          $('#season').append(season);
+
+          function getMatchups(week) {
+            // empty div
+            $('#matchups').empty();
+            $('#loader').toggleClass('disabled', 'active');
+            // add matchups for week
+            seasonRef.collection('matchups').where('week', '==', parseInt(week)).get().then(snapshot => {
+              if(snapshot.docs.length == 0) {
+                alert('Nothing for this week');
+              } else {
+                for(var i = 0; i < snapshot.docs.length; i++) {
+                  var doc = snapshot.docs[i];
+                  var data = doc.data();
+
+                  let awayPoints = data.away.totalTeamPoints;
+                  let homePoints = data.home.totalTeamPoints;
+                  let winner = data.winner;
+
+                  let awayRef = data.away.teamId;
+                  let homeRef = data.home.teamId;
+
+                  awayRef.get().then(awaySnap => {
+                    var awayData = awaySnap.data();
+
+                    homeRef.get().then(homeSnap => {
+                      var homeData = homeSnap.data();
+
+                      let awayName = awayData.teamLocation + ' ' + awayData.teamNickname;
+                      let awayAbbrev = awayData.teamAbbrev;
+                      let homeName = homeData.teamLocation + ' ' + homeData.teamNickname;
+                      let homeAbbrev = homeData.teamAbbrev;
+
+                      $('#loader').toggleClass('active', 'disabled');
+                      if(winner == "away") {
+                        $('#matchups').append('<div class="ui card"><div class="content"><div class="ui center aligned two column grid"><div class="column"><div class="header">' + awayName + '</div><div class="meta">' + awayAbbrev + '</div></div><div class="column"><div class="header">' + homeName + '</div><div class="meta">' + homeAbbrev + '</div></div></div></div><div class="extra content"><div class="ui two buttons"><div class="ui basic green button">' + awayPoints + '</div><div class="ui basic red button">' + homePoints + '</div></div></div></div>');
+                      } else {
+                        $('#matchups').append('<div class="ui card"><div class="content"><div class="ui center aligned two column grid"><div class="column"><div class="header">' + awayName + '</div><div class="meta">' + awayAbbrev + '</div></div><div class="column"><div class="header">' + homeName + '</div><div class="meta">' + homeAbbrev + '</div></div></div></div><div class="extra content"><div class="ui two buttons"><div class="ui basic red button">' + awayPoints + '</div><div class="ui basic green button">' + homePoints + '</div></div></div></div>');
+                      }
+                    });
+                  });
+                }
+              }
+            });
+          }
+
+          $('.tabitem').click(function(){
+              var weekText = $('.active').text();
+              var week = weekText.split(' ')[1];
+              $('.active').text(week);
+              $('.active').removeClass('active');
+
+              weekText = $(this).text();
+              $(this).text('Week ' + weekText);
+              $(this).addClass('active');
+
+              getMatchups(parseInt(week));
+          });
+
+          getMatchups(1);
+
       });
 
     </script>

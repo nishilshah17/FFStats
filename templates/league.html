@@ -100,7 +100,7 @@
               // add season to view
               $('#loader').toggleClass('active', 'disabled');
               var cardColor = colors[i % colors.length];
-              $('#seasons').append('<a class="ui ' + cardColor + ' card" href="#"><div class="content"><div class="header">' + doc.id + '</div></div></a>');
+              $('#seasons').append('<a class="ui ' + cardColor + ' card" href="javascript:viewSeason(' + doc.id + ')"><div class="content"><div class="header">' + doc.id + '</div></div></a>');
             }
           }
         });
