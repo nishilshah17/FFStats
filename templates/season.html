@@ -78,8 +78,8 @@
         </div>
         <div class="ui right very close rail">
           <div class="ui inverted vertical menu">
-            <a class="item active">Matchups</a>
-            <a class="item">Teams</a>
+            <a class="menuitem item active">Matchups</a>
+            <a class="menuitem item">Teams</a>
           </div>
         </div>
           <div class="ui two stackable cards" id="matchups">
@@ -180,6 +180,10 @@
               $(this).addClass('tabactive');
 
               getMatchups(parseInt(week));
+          });
+
+          $('.menuitem').click(function() {
+
           });
 
           getMatchups(1);
