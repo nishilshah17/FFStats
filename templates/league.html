@@ -45,7 +45,7 @@
       </div>
     </div>
 
-    <div class="ui main text container">
+    <div class="ui main text container" id="main">
       <div class="ui clearing segment">
         <h1 class="ui left floated header">
           PJC Fantasy Football League
@@ -53,43 +53,7 @@
       </div>
 
       <h2 class="ui header">Seasons</h2>
-      <div class="ui three stackable cards">
-        <a class="ui red card" href="javascript:viewSeason(2018)">
-          <div class="content">
-            <div class="header">2018</div>
-          </div>
-        </a>
-        <a class="ui orange card" href="javascript:viewSeason(2017)">
-          <div class="content">
-            <div class="header">2017</div>
-          </div>
-        </a>
-        <a class="ui yellow card" href="#">
-          <div class="content">
-            <div class="header">2016</div>
-          </div>
-        </a>
-        <a class="ui olive card" href="#">
-          <div class="content">
-            <div class="header">2015</div>
-          </div>
-        </a>
-        <a class="ui green card" href="#">
-          <div class="content">
-            <div class="header">2014</div>
-          </div>
-        </a>
-        <a class="ui teal card" href="#">
-          <div class="content">
-            <div class="header">2013</div>
-          </div>
-        </a>
-        <a class="ui blue card" href="#">
-          <div class="content">
-            <div class="header">2012</div>
-          </div>
-        </a>
-      </div>
+      <div id="loader" class="ui active centered inline big loader"></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/5.5.8/firebase-app.js"></script>
@@ -117,9 +81,30 @@
         timestampsInSnapshots: true
       });
 
+      var leagueRef = db.collection("leagues").doc(league_id);
+
       function viewSeason(year) {
         window.location.href = '/home/league/' + league_id + '/season/' + year;
       }
+
+      $(document).ready(function() {
+        // add seasons to view
+        leagueRef.collection("seasons").get().then(snapshot => {
+          if(snapshot.docs.length == 0) {
+            // no data for league
+            $('#main').append('<p>Error: No data to display.</p>');
+          } else {
+            $('#main').append('<div class="ui three stackable cards" id="seasons"></div>');
+            for(var i = 0; i < snapshot.docs.length; i++) {
+              var doc = snapshot.docs[i];
+              // add season to view
+              $('#loader').toggleClass('active', 'disabled');
+              var cardColor = colors[i % colors.length];
+              $('#seasons').append('<a class="ui ' + cardColor + ' card" href="#"><div class="content"><div class="header">' + doc.id + '</div></div></a>');
+            }
+          }
+        });
+      });
 
     </script>
   </body>
