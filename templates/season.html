@@ -57,38 +57,22 @@
 
       <div class="ui segment">
         <div class="ui left very close rail">
-          <div class="ui secondary vertical pointing menu right floated" style="width:50%">
-            <a class="active tabactive item tabitem">Week 1</a>
-            <a class="item tabitem">2</a>
-            <a class="item tabitem">3</a>
-            <a class="item tabitem">4</a>
-            <a class="item tabitem">5</a>
-            <a class="item tabitem">6</a>
-            <a class="item tabitem">7</a>
-            <a class="item tabitem">8</a>
-            <a class="item tabitem">9</a>
-            <a class="item tabitem">10</a>
-            <a class="item tabitem">11</a>
-            <a class="item tabitem">12</a>
-            <a class="item tabitem">13</a>
-            <a class="item tabitem">14</a>
-            <a class="item tabitem">15</a>
-            <a class="item tabitem">16</a>
+          <div id="leftMenu" class="ui secondary vertical pointing menu right floated" style="width:50%">
           </div>
         </div>
         <div class="ui right very close rail">
           <div class="ui inverted vertical menu">
-            <a class="menuitem item active">Matchups</a>
-            <a class="menuitem item">Teams</a>
-            <a class="menuitem item">Standings</a>
-            <a class="menuitem item">Draft</a>
-            <a class="menuitem item">Analysis</a>
+            <a id="matchupsitem" class="item active">Matchups</a>
+            <a id="teamsitem" class="menuitem item">Teams</a>
+            <a class="item">Standings</a>
+            <a class="item">Draft</a>
+            <a class="item">Analysis</a>
           </div>
         </div>
-          <div class="ui two stackable cards" id="matchups">
-          </div>
-          <br/>
-          <div id="loader" class="ui disabled centered inline big loader"></div>
+        <div id="main">
+        </div>
+        <br/>
+        <div id="loader" class="ui disabled centered inline big loader"></div>
       </div>
     </div>
 
@@ -119,16 +103,23 @@
       var leagueRef = db.collection("leagues").doc(league_id);
       var seasonRef = leagueRef.collection("seasons").doc(season);
       var matchups = {};
+      var teams = {};
 
       $(document).ready(function() {
+          var currentDisplay = "matchups";
+
           $('.ui.dropdown').dropdown();
           $('#season').append(season);
 
-          function getMatchups(week) {
+          function displayMatchupsForWeek(week) {
             // empty div
-            $('#matchups').empty();
+            $('#main').empty();
             $('#loader').removeClass('disabled');
             $('#loader').addClass('active');
+            // add container
+            var weekText = $('.tabactive').text();
+            $('#main').append('<h2 class="ui center aligned header">' + weekText + ' Matchups</h2>');
+            $('#main').append('<div class="ui two stackable cards" id="matchups"></div>');
             // add matchups for week
             seasonRef.collection('matchups').where('week', '==', parseInt(week)).get().then(snapshot => {
               if(snapshot.docs.length == 0) {
@@ -172,7 +163,45 @@
             });
           }
 
-          $('.tabitem').click(function(){
+          function displayMatchups() {
+            // add tab menu
+            $('#leftMenu').empty();
+            var sections = ["Week 1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"];
+            for(var i = 0; i < sections.length; i++) {
+              if (i == 0) {
+                $('#leftMenu').append('<a class="active tabactive item weekitem">' + sections[i] + '</a>');
+              } else {
+                $('#leftMenu').append('<a class="item weekitem">' + sections[i] + '</a>');
+              }
+            }
+            // add main content
+            displayMatchupsForWeek(1);
+          }
+
+          function displayTeamsMenu() {
+
+          }
+
+          function displayTeams() {
+            // empty stuff
+            $('#leftMenu').empty();
+            $('#main').empty();
+
+            if(JSON.stringify(teams) == '{}') {
+              // fetch data
+              seasonRef.collection('teams').get().then(snapshot => {
+                for(var i = 0; i < snapshot.docs.length; i++) {
+                  var doc = snapshot.docs[i];
+                  teams[doc.id] = doc.data();
+                }
+                displayTeamsMenu();
+              });
+            } else {
+              displayTeamsMenu();
+            }
+          }
+
+          $(document).on('click', '.weekitem', function(){
               var weekText = $('.tabactive').text();
               var week = weekText.split(' ')[1];
               $('.tabactive').text(week);
@@ -184,14 +213,24 @@
               $(this).addClass('active');
               $(this).addClass('tabactive');
 
-              getMatchups(parseInt(weekText));
+              displayMatchupsForWeek(parseInt(weekText));
           });
 
-          $('.menuitem').click(function() {
-
+          $('#matchupsitem').click(function() {
+            if(currentDisplay != "matchups") {
+              displayMatchups();
+              currentDisplay = "matchups";
+            }
           });
 
-          getMatchups(1);
+          $('#teamsitem').click(function() {
+            if(currentDisplay != "teams") {
+              displayTeams();
+              currentDisplay = "teams";
+            }
+          });
+
+          displayMatchups();
       });
 
     </script>

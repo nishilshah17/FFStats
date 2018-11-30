@@ -133,8 +133,8 @@
                 // add league to view
                 let length = data.startingSeason + "-" + data.endingSeason;
 
-                leagueRef.collection("seasons").limit(1).get().then(seasonSnap => {
-                  let seasonData = seasonSnap.docs[0].data();
+                leagueRef.collection("seasons").get().then(seasonSnap => {
+                  let seasonData = seasonSnap.docs[seasonSnap.docs.length - 1].data();
 
                   $('#loader').toggleClass('active', 'disabled');
                   $('#leagues').append('<a class="ui card" href="javascript:viewLeague(' + doc.id + ')"><div class="content"><div class="header">' + seasonData.name + '</div></div><div class="extra content"><div class="right floated author">' + length + '</div></div></a>');
