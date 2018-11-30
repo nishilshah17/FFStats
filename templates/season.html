@@ -80,6 +80,9 @@
           <div class="ui inverted vertical menu">
             <a class="menuitem item active">Matchups</a>
             <a class="menuitem item">Teams</a>
+            <a class="menuitem item">Standings</a>
+            <a class="menuitem item">Draft</a>
+            <a class="menuitem item">Analysis</a>
           </div>
         </div>
           <div class="ui two stackable cards" id="matchups">
@@ -135,33 +138,35 @@
                   var doc = snapshot.docs[i];
                   var data = doc.data();
 
-                  let awayPoints = data.away.totalTeamPoints;
-                  let homePoints = data.home.totalTeamPoints;
-                  let winner = data.winner;
+                  if(data.matchupType != "bye") {
+                    let awayPoints = data.away.totalTeamPoints;
+                    let homePoints = data.home.totalTeamPoints;
+                    let winner = data.winner;
 
-                  let awayRef = data.away.teamId;
-                  let homeRef = data.home.teamId;
+                    let awayRef = data.away.teamId;
+                    let homeRef = data.home.teamId;
 
-                  awayRef.get().then(awaySnap => {
-                    var awayData = awaySnap.data();
+                    awayRef.get().then(awaySnap => {
+                      var awayData = awaySnap.data();
 
-                    homeRef.get().then(homeSnap => {
-                      var homeData = homeSnap.data();
+                      homeRef.get().then(homeSnap => {
+                        var homeData = homeSnap.data();
 
-                      let awayName = awayData.teamLocation + ' ' + awayData.teamNickname;
-                      let awayAbbrev = awayData.teamAbbrev;
-                      let homeName = homeData.teamLocation + ' ' + homeData.teamNickname;
-                      let homeAbbrev = homeData.teamAbbrev;
+                        let awayName = awayData.teamLocation + ' ' + awayData.teamNickname;
+                        let awayAbbrev = awayData.teamAbbrev;
+                        let homeName = homeData.teamLocation + ' ' + homeData.teamNickname;
+                        let homeAbbrev = homeData.teamAbbrev;
 
-                      $('#loader').removeClass('active');
-                      $('#loader').addClass('disabled');
-                      if(winner == "away") {
-                        $('#matchups').append('<div class="ui card"><div class="content"><div class="ui center aligned two column grid"><div class="column"><div class="header">' + awayName + '</div><div class="meta">' + awayAbbrev + '</div></div><div class="column"><div class="header">' + homeName + '</div><div class="meta">' + homeAbbrev + '</div></div></div></div><div class="extra content"><div class="ui two buttons"><div class="ui basic green button">' + awayPoints + '</div><div class="ui basic red button">' + homePoints + '</div></div></div></div>');
-                      } else {
-                        $('#matchups').append('<div class="ui card"><div class="content"><div class="ui center aligned two column grid"><div class="column"><div class="header">' + awayName + '</div><div class="meta">' + awayAbbrev + '</div></div><div class="column"><div class="header">' + homeName + '</div><div class="meta">' + homeAbbrev + '</div></div></div></div><div class="extra content"><div class="ui two buttons"><div class="ui basic red button">' + awayPoints + '</div><div class="ui basic green button">' + homePoints + '</div></div></div></div>');
-                      }
+                        $('#loader').removeClass('active');
+                        $('#loader').addClass('disabled');
+                        if(winner == "away") {
+                          $('#matchups').append('<div class="ui card"><div class="content"><div class="ui center aligned two column grid"><div class="column"><div class="header">' + awayName + '</div><div class="meta">' + awayAbbrev + '</div></div><div class="column"><div class="header">' + homeName + '</div><div class="meta">' + homeAbbrev + '</div></div></div></div><div class="extra content"><div class="ui two buttons"><div class="ui basic green button">' + awayPoints + '</div><div class="ui basic red button">' + homePoints + '</div></div></div></div>');
+                        } else {
+                          $('#matchups').append('<div class="ui card"><div class="content"><div class="ui center aligned two column grid"><div class="column"><div class="header">' + awayName + '</div><div class="meta">' + awayAbbrev + '</div></div><div class="column"><div class="header">' + homeName + '</div><div class="meta">' + homeAbbrev + '</div></div></div></div><div class="extra content"><div class="ui two buttons"><div class="ui basic red button">' + awayPoints + '</div><div class="ui basic green button">' + homePoints + '</div></div></div></div>');
+                        }
+                      });
                     });
-                  });
+                  }
                 }
               }
             });
@@ -179,7 +184,7 @@
               $(this).addClass('active');
               $(this).addClass('tabactive');
 
-              getMatchups(parseInt(week));
+              getMatchups(parseInt(weekText));
           });
 
           $('.menuitem').click(function() {
@@ -187,7 +192,6 @@
           });
 
           getMatchups(1);
-
       });
 
     </script>

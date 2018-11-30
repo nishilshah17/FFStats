@@ -126,13 +126,19 @@
           } else {
             $('#main').append('<div class="ui three stackable cards" id="leagues"></div>');
             for (var i = 0; i < snapshot.docs.length; i++) {
-              var doc = snapshot.docs[i];
-              var leagueRef = doc.data().ref;
+              let doc = snapshot.docs[i];
+              let leagueRef = doc.data().ref;
               leagueRef.get().then(snap => {
-                var data = snap.data();
+                let data = snap.data();
                 // add league to view
-                $('#loader').toggleClass('active', 'disabled');
-                $('#leagues').append('<a class="ui card" href="javascript:viewLeague(' + doc.id + ')"><div class="content"><div class="header">' + data.name + '</div></div><div class="extra content"><div class="right floated author">' + data.length + '</div></div></a>');
+                let length = data.startingSeason + "-" + data.endingSeason;
+
+                leagueRef.collection("seasons").limit(1).get().then(seasonSnap => {
+                  let seasonData = seasonSnap.docs[0].data();
+
+                  $('#loader').toggleClass('active', 'disabled');
+                  $('#leagues').append('<a class="ui card" href="javascript:viewLeague(' + doc.id + ')"><div class="content"><div class="header">' + seasonData.name + '</div></div><div class="extra content"><div class="right floated author">' + length + '</div></div></a>');
+                });
               });
             }
           }
