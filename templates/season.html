@@ -62,8 +62,8 @@
         </div>
         <div class="ui right very close rail">
           <div class="ui inverted vertical menu">
-            <a id="matchupsitem" class="item active">Matchups</a>
-            <a id="teamsitem" class="menuitem item">Teams</a>
+            <a id="teamsitem" class="menuitem item active">Teams</a>
+            <a id="matchupsitem" class="menuitem item">Matchups</a>
             <a class="item">Standings</a>
             <a class="item">Draft</a>
             <a class="item">Analysis</a>
@@ -106,7 +106,7 @@
       var teams = {};
 
       $(document).ready(function() {
-          var currentDisplay = "matchups";
+          var currentDisplay = "teamsitem";
 
           $('.ui.dropdown').dropdown();
           $('#season').append(season);
@@ -166,6 +166,7 @@
           function displayMatchups() {
             // add tab menu
             $('#leftMenu').empty();
+            $('#leftMenu').css('width', '50%');
             var sections = ["Week 1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16"];
             for(var i = 0; i < sections.length; i++) {
               if (i == 0) {
@@ -179,25 +180,57 @@
           }
 
           function displayTeamsMenu() {
+            var teamIDs = Object.keys(teams);
+            teamIDs.sort();
 
+            for(var i = 0; i < teamIDs.length; i++) {
+              var id = teamIDs[i];
+              var name = teams[id]["teamLocation"] + " " + teams[id]["teamNickname"];
+
+              if(i == 0) {
+                $('#leftMenu').append('<a id="' + id + '" class="active teamactive item teamitem">' + name + '</a>');
+              } else {
+                $('#leftMenu').append('<a id="' + id + '" class="item teamitem">' + name + '</a>');
+              }
+            }
+          }
+
+          function displayTeam(id) {
+            $('#main').empty();
+
+            var data = teams[id];
+            var name = data.teamLocation + ' ' + data.teamNickname + ' (' + data.teamAbbrev + ')';
+            var owner = data.owners[0].firstName + ' ' + data.owners[0].lastName;
+            var record = data.record.overallWins + '-' + data.record.overallLosses + '-' + data.record.overallTies;
+
+            $('#main').append('<div class="ui centered card"><img class="ui small circular centered image" src="' + data.logoUrl + '"><div class="content"><h2 class="ui centered header">' + name + '</h2><div class="ui container center aligned"><div class="ui huge label">' + record + '</div></div><h3 class="ui centered header">' + owner + '</h3></div></div>');
+            $('#main').append('<br/><div class="ui tiny two statistics"><div class="statistic"><div class="value">' + data.record.pointsFor + '</div><div class="label">Points For</div></div><div class="statistic"><div class="value">' + data.record.pointsAgainst + '</div><div class="label">Points Against</div></div></div></div>')
           }
 
           function displayTeams() {
             // empty stuff
             $('#leftMenu').empty();
-            $('#main').empty();
+            $('#leftMenu').css('width', '70%');
 
             if(JSON.stringify(teams) == '{}') {
+              $('#loader').removeClass('disabled');
+              $('#loader').addClass('active');
               // fetch data
               seasonRef.collection('teams').get().then(snapshot => {
                 for(var i = 0; i < snapshot.docs.length; i++) {
                   var doc = snapshot.docs[i];
                   teams[doc.id] = doc.data();
                 }
+                $('#loader').removeClass('active');
+                $('#loader').addClass('disabled');
                 displayTeamsMenu();
+                displayTeam(snapshot.docs[0].id);
               });
             } else {
+              var teamIDs = Object.keys(teams);
+              teamIDs.sort();
               displayTeamsMenu();
+              displayTeam(teamIDs[0]);
             }
           }
 
@@ -216,21 +249,33 @@
               displayMatchupsForWeek(parseInt(weekText));
           });
 
-          $('#matchupsitem').click(function() {
-            if(currentDisplay != "matchups") {
-              displayMatchups();
-              currentDisplay = "matchups";
+          $(document).on('click', '.teamitem', function() {
+              $('.teamactive').removeClass('active');
+              $('.teamactive').removeClass('teamactive');
+
+              $(this).addClass('teamactive');
+              $(this).addClass('active');
+
+              var id = parseInt($('.teamactive').attr('id'));
+              displayTeam(id);
+          });
+
+          $(document).on('click', '.menuitem', function() {
+            var clicked = $(this).attr('id');
+
+            if(currentDisplay != clicked) {
+              $('#' + currentDisplay).removeClass('active');
+              if(clicked == "matchupsitem") {
+                displayMatchups();
+              } else if(clicked == "teamsitem") {
+                displayTeams();
+              }
+              $('#' + clicked).addClass('active');
+              currentDisplay = clicked;
             }
           });
 
-          $('#teamsitem').click(function() {
-            if(currentDisplay != "teams") {
-              displayTeams();
-              currentDisplay = "teams";
-            }
-          });
-
-          displayMatchups();
+          displayTeams();
       });
 
     </script>
