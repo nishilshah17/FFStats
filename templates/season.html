@@ -11,8 +11,10 @@
       <!-- JS -->
       <script type="text/javascript" src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
       <script src="{{url_for('static',filename='js/transition.js')}}"></script>
+      <script src="{{url_for('static',filename='js/dimmer.js')}}"></script>
       <script src="{{url_for('static',filename='js/dropdown.js')}}"></script>
       <script src="{{url_for('static',filename='js/tablesort.js')}}"></script>
+      <script src="{{url_for('static',filename='js/modal.js')}}"></script>
       <script src="https://apis.google.com/js/platform.js" async defer></script>
       <!-- CSS -->
       <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/semantic.min.css')}}">
@@ -74,6 +76,39 @@
         </div>
         <br/>
         <div id="loader" class="ui disabled centered inline big loader"></div>
+
+        <div class="ui basic modal">
+          <div class="ui icon header" id="matchupHeader">
+          </div>
+          <div class="content">
+            <div class="ui two column grid">
+              <div class="column">
+                <table class="ui compact celled table">
+                  <thead>
+                    <tr><th colspan="3" style="text-align: center" id="awayTeamName"></th></tr>
+                    <tr><th>Slot</th><th>Player</th><th>Points</th></tr>
+                  </thead>
+                  <tbody id="awayScores"></tbody>
+                </table>
+              </div>
+              <div class="column">
+                <table class="ui compact celled table">
+                  <thead>
+                    <tr><th colspan="3" style="text-align: center;" id="homeTeamName"></th></tr>
+                    <tr><th>Slot</th><th>Player</th><th>Points</th></tr>
+                  </thead>
+                  <tbody id="homeScores"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="actions">
+            <div class="ui red basic cancel inverted button">
+              <i class="remove icon"></i>
+              Close
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -122,6 +157,65 @@
             $('#loader').addClass('disabled');
           }
 
+          function getTeamName(data) {
+            return data.teamLocation + ' ' + data.teamNickname;
+          }
+
+          function addScores(playerScores, id, total, benchTotal) {
+            var firstBench = true;
+
+            for(var i = 0; i < playerScores.length; i++) {
+              var p = playerScores[i];
+              var pts = (p.currentPeriodRealStats.appliedStatTotal == undefined ? 0 : p.currentPeriodRealStats.appliedStatTotal);
+              var name = p.player.firstName + ' ' + p.player.lastName;
+              var pos = p.position;
+              var row = (pos == 'BE' ? '<tr class="active">' : '<tr>');
+
+              if(pos == 'BE' && firstBench) {
+                $(id).append('<tr class="warning"><td colspan="2"><b>Total</b></td><td><b>' + total + '</b></td></tr>');
+                firstBench = false;
+              }
+
+              $(id).append(row + '<td>' + pos + '</td><td>' + name + '</td><td>' + pts + '</td></tr>');
+
+              if(i == playerScores.length - 1) {
+                $(id).append('<tr class="warning"><td colspan="2"><b>Total</b></td><td><b>' + benchTotal + '</b></td></tr>');
+              }
+            };
+          }
+
+          function displayMatchup(id) {
+            // empty components
+            $('#matchupHeader').empty();
+            $('#awayTeamName').empty();
+            $('#homeTeamName').empty();
+            $('#awayScores').empty();
+            $('#homeScores').empty();
+
+            var data = matchups[id];
+            var awayData = teams[id.split('-')[1]];
+            var homeData = teams[id.split('-')[2]];
+
+            var awayName = getTeamName(awayData);
+            var homeName = getTeamName(homeData);
+
+            var awayPlayers = data.away.boxscore.playerScores;
+            var homePlayers = data.home.boxscore.playerScores;
+            var awayTotal = data.away.boxscore.activeTotalPoints;
+            var awayBenchTotal = data.away.boxscore.inactiveTotalPoints;
+            var homeTotal = data.home.boxscore.activeTotalPoints;
+            var homeBenchTotal = data.home.boxscore.inactiveTotalPoints;
+
+            $('#matchupHeader').append(awayName + ' @ ' + homeName);
+            $('#awayTeamName').append(awayName);
+            $('#homeTeamName').append(homeName);
+
+            addScores(awayPlayers, '#awayScores', awayTotal, awayBenchTotal);
+            addScores(homePlayers, '#homeScores', homeTotal, homeBenchTotal);
+
+            $('.ui.basic.modal').modal('show');
+          }
+
           function displayMatchupsForWeek(week) {
             // empty div
             $('#main').empty();
@@ -144,28 +238,25 @@
                     let homePoints = data.home.totalTeamPoints;
                     let winner = data.winner;
 
-                    let awayRef = data.away.teamId;
-                    let homeRef = data.home.teamId;
+                    let awayId = data.away.teamId.id;
+                    let homeId = data.home.teamId.id;
+                    let matchupID = week + '-' + awayId + '-' + homeId;
+                    matchups[matchupID] = data;
 
-                    awayRef.get().then(awaySnap => {
-                      var awayData = awaySnap.data();
+                    var awayData = teams[awayId];
+                    var homeData = teams[homeId];
 
-                      homeRef.get().then(homeSnap => {
-                        var homeData = homeSnap.data();
+                    let awayName = getTeamName(awayData);
+                    let awayAbbrev = awayData.teamAbbrev;
+                    let homeName = getTeamName(homeData);
+                    let homeAbbrev = homeData.teamAbbrev;
 
-                        let awayName = awayData.teamLocation + ' ' + awayData.teamNickname;
-                        let awayAbbrev = awayData.teamAbbrev;
-                        let homeName = homeData.teamLocation + ' ' + homeData.teamNickname;
-                        let homeAbbrev = homeData.teamAbbrev;
-
-                        hideLoader();
-                        if(winner == "away") {
-                          $('#matchups').append('<div class="ui card"><div class="content"><div class="ui center aligned two column grid"><div class="column"><div class="header">' + awayName + '</div><div class="meta">' + awayAbbrev + '</div></div><div class="column"><div class="header">' + homeName + '</div><div class="meta">' + homeAbbrev + '</div></div></div></div><div class="extra content"><div class="ui two buttons"><div class="ui basic green button">' + awayPoints + '</div><div class="ui basic red button">' + homePoints + '</div></div></div></div>');
-                        } else {
-                          $('#matchups').append('<div class="ui card"><div class="content"><div class="ui center aligned two column grid"><div class="column"><div class="header">' + awayName + '</div><div class="meta">' + awayAbbrev + '</div></div><div class="column"><div class="header">' + homeName + '</div><div class="meta">' + homeAbbrev + '</div></div></div></div><div class="extra content"><div class="ui two buttons"><div class="ui basic red button">' + awayPoints + '</div><div class="ui basic green button">' + homePoints + '</div></div></div></div>');
-                        }
-                      });
-                    });
+                    hideLoader();
+                    if(winner == "away") {
+                      $('#matchups').append('<a class="ui card matchupitem" id="' + matchupID + '"><div class="content"><div class="ui center aligned two column grid"><div class="column"><div class="header">' + awayName + '</div><div class="meta">' + awayAbbrev + '</div></div><div class="column"><div class="header">' + homeName + '</div><div class="meta">' + homeAbbrev + '</div></div></div></div><div class="extra content"><div class="ui two buttons"><div class="ui basic green button">' + awayPoints + '</div><div class="ui basic red button">' + homePoints + '</div></div></div></a>');
+                    } else {
+                      $('#matchups').append('<a class="ui card matchupitem" id="' + matchupID + '"><div class="content"><div class="ui center aligned two column grid"><div class="column"><div class="header">' + awayName + '</div><div class="meta">' + awayAbbrev + '</div></div><div class="column"><div class="header">' + homeName + '</div><div class="meta">' + homeAbbrev + '</div></div></div></div><div class="extra content"><div class="ui two buttons"><div class="ui basic red button">' + awayPoints + '</div><div class="ui basic green button">' + homePoints + '</div></div></div></a>');
+                    }
                   }
                 }
               }
@@ -318,6 +409,11 @@
 
               var id = parseInt($('.teamactive').attr('id'));
               displayTeam(id);
+          });
+
+          $(document).on('click', '.matchupitem', function() {
+            var matchupID = $(this).attr('id');
+            displayMatchup(matchupID);
           });
 
           $(document).on('click', '.menuitem', function() {
