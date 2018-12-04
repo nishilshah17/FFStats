@@ -12,6 +12,7 @@
       <script type="text/javascript" src="{{url_for('static',filename='js/jquery.min.js')}}"></script>
       <script src="{{url_for('static',filename='js/transition.js')}}"></script>
       <script src="{{url_for('static',filename='js/dropdown.js')}}"></script>
+      <script src="{{url_for('static',filename='js/tablesort.js')}}"></script>
       <script src="https://apis.google.com/js/platform.js" async defer></script>
       <!-- CSS -->
       <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/semantic.min.css')}}">
@@ -64,7 +65,7 @@
           <div class="ui inverted vertical menu">
             <a id="teamsitem" class="menuitem item active">Teams</a>
             <a id="matchupsitem" class="menuitem item">Matchups</a>
-            <a class="item">Standings</a>
+            <a id="standingsitem" class="menuitem item">Standings</a>
             <a class="item">Draft</a>
             <a class="item">Analysis</a>
           </div>
@@ -111,11 +112,20 @@
           $('.ui.dropdown').dropdown();
           $('#season').append(season);
 
+          function showLoader() {
+            $('#loader').removeClass('disabled');
+            $('#loader').addClass('active');
+          }
+
+          function hideLoader() {
+            $('#loader').removeClass('active');
+            $('#loader').addClass('disabled');
+          }
+
           function displayMatchupsForWeek(week) {
             // empty div
             $('#main').empty();
-            $('#loader').removeClass('disabled');
-            $('#loader').addClass('active');
+            showLoader();
             // add container
             var weekText = $('.tabactive').text();
             $('#main').append('<h2 class="ui center aligned header">' + weekText + ' Matchups</h2>');
@@ -148,8 +158,7 @@
                         let homeName = homeData.teamLocation + ' ' + homeData.teamNickname;
                         let homeAbbrev = homeData.teamAbbrev;
 
-                        $('#loader').removeClass('active');
-                        $('#loader').addClass('disabled');
+                        hideLoader();
                         if(winner == "away") {
                           $('#matchups').append('<div class="ui card"><div class="content"><div class="ui center aligned two column grid"><div class="column"><div class="header">' + awayName + '</div><div class="meta">' + awayAbbrev + '</div></div><div class="column"><div class="header">' + homeName + '</div><div class="meta">' + homeAbbrev + '</div></div></div></div><div class="extra content"><div class="ui two buttons"><div class="ui basic green button">' + awayPoints + '</div><div class="ui basic red button">' + homePoints + '</div></div></div></div>');
                         } else {
@@ -213,16 +222,14 @@
             $('#leftMenu').css('width', '70%');
 
             if(JSON.stringify(teams) == '{}') {
-              $('#loader').removeClass('disabled');
-              $('#loader').addClass('active');
+              showLoader();
               // fetch data
               seasonRef.collection('teams').get().then(snapshot => {
                 for(var i = 0; i < snapshot.docs.length; i++) {
                   var doc = snapshot.docs[i];
                   teams[doc.id] = doc.data();
                 }
-                $('#loader').removeClass('active');
-                $('#loader').addClass('disabled');
+                hideLoader();
                 displayTeamsMenu();
                 displayTeam(snapshot.docs[0].id);
               });
@@ -231,6 +238,59 @@
               teamIDs.sort();
               displayTeamsMenu();
               displayTeam(teamIDs[0]);
+            }
+          }
+
+          function safeAddCell(value) {
+            if(value > 9) {
+              return '<td data-sort-value="z' + value + '">' + value + '</td>';
+            }
+            return '<td>' + value + '</td>';
+          }
+
+          function displayStandingsTable() {
+            var teamIDs = Object.keys(teams);
+
+            $('#main').empty();
+
+            $('#main').append('<h2 class="ui center aligned header">Standings</h2>');
+            var table = '<table class="ui violet sortable table"><thead><tr><th class="sorted ascending">#</th><th>Team</th><th>W</th><th>L</th><th>T</th><th>PF</th><th>PA</th></tr></thead><tbody>';
+            standings = {};
+
+            for(var i = 0; i < teamIDs.length; i++) {
+              var team = teams[teamIDs[i]];
+              standings[team.record.overallStanding] = team;
+            }
+            for(var i = 1; i <= teamIDs.length; i++) {
+              var team = standings[i];
+              var record = team.record;
+              var name = team.teamLocation + ' ' + team.teamNickname;
+              table += '<tr>' + safeAddCell(record.overallStanding) + '<td>' + name + '</td>' + safeAddCell(record.overallWins) + safeAddCell(record.overallLosses) + safeAddCell(record.overallTies) + '<td>' + record.pointsFor + '</td><td>' + record.pointsAgainst + '</td></tr>';
+            }
+            table += '</tbody></table>';
+            $('#main').append(table);
+
+            $('table').tablesort();
+
+          }
+
+          function displayStandings() {
+            // empty stuff
+            $('#leftMenu').empty();
+
+            if(JSON.stringify(teams) == '{}') {
+              showLoader();
+              // fetch data
+              seasonRef.collection('teams').get().then(snapshot => {
+                for(var i = 0; i < snapshot.docs.length; i++) {
+                  var doc = snapshot.docs[i];
+                  teams[doc.id] = doc.data();
+                }
+                hideLoader();
+                displayStandingsTable();
+              });
+            } else {
+              displayStandingsTable();
             }
           }
 
@@ -269,6 +329,8 @@
                 displayMatchups();
               } else if(clicked == "teamsitem") {
                 displayTeams();
+              } else if(clicked == "standingsitem") {
+                displayStandings();
               }
               $('#' + clicked).addClass('active');
               currentDisplay = clicked;
