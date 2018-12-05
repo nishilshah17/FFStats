@@ -172,14 +172,14 @@
               var row = (pos == 'BE' ? '<tr class="active">' : '<tr>');
 
               if(pos == 'BE' && firstBench) {
-                $(id).append('<tr class="warning"><td colspan="2"><b>Total</b></td><td><b>' + total + '</b></td></tr>');
+                $(id).append('<tr class="warning"><td colspan="2"><b>Total</td><td>' + total + '</td></tr>');
                 firstBench = false;
               }
 
               $(id).append(row + '<td>' + pos + '</td><td>' + name + '</td><td>' + pts + '</td></tr>');
 
               if(i == playerScores.length - 1) {
-                $(id).append('<tr class="warning"><td colspan="2"><b>Total</b></td><td><b>' + benchTotal + '</b></td></tr>');
+                $(id).append('<tr class="warning"><td colspan="2"><b>Total</td><td>' + benchTotal + '</td></tr>');
               }
             };
           }
